@@ -4,4 +4,5 @@
 
 /WindowsSetDefaultProgramChecker/bin
 /WindowsSetDefaultProgramChecker/obj
-/.vs/WindowsSetDefaultProgramChecker/v15/Server/sqlite3
+/.vs/
+/packages/

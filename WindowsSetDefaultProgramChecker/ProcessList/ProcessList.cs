@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -39,10 +41,20 @@ namespace WindowsSetDefaultProgramChecker.ProcessList
             if (_windowTitles == null)
             {
                 GrabWindowNames();
-                Task.Delay(delayMilliseconds).Wait();
             }
-            return _windowTitles.Any(x => Regex.IsMatch(x, windowName));
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            while (!doHasWindow(windowName) && timer.ElapsedMilliseconds < delayMilliseconds)
+            {
+                GrabWindowNames();
+                Task.Delay(250).Wait();
+            }
+            return doHasWindow(windowName);
         }
 
+        private bool doHasWindow(string windowName)
+        {
+            return _windowTitles.Any(x => Regex.IsMatch(x, windowName));
+        }
     }
 }

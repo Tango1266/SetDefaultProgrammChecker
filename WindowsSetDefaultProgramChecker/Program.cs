@@ -15,21 +15,39 @@ namespace WindowsSetDefaultProgramChecker
     {
         static void Main(string[] args)
         {
+            DisplayVersionInformation();
+            ExectuteShellCommand("control /name Microsoft.DefaultPrograms /page pageDefaultProgram");
+            EvaluateBatchExecutedSuccessfully("Standardprogramme festlegen");
+            CloseApp();
+        }
+
+        private static void EvaluateBatchExecutedSuccessfully(string expectedWindowName)
+        {
+            var windowExists = CheckWaitExists(expectedWindowName);
+            if (windowExists) Console.WriteLine("Die Batch kann genutzt werden");
+            else Console.WriteLine("Die Batch kann NICHT genutzt werden");
+        }
+
+        private static bool CheckWaitExists(string expectedWindowName)
+        {
+            return new ProcessList.ProcessList().hasWindow(expectedWindowName);
+        }
+
+        private static void DisplayVersionInformation()
+        {
             var version = File.ReadAllText("LastBuildInfo.txt");
-            Console.WriteLine(version);
-            var command = "/C control /name Microsoft.DefaultPrograms /page pageDefaultProgram";
+            Console.WriteLine(version + "\n");
+        }
+
+        private static void ExectuteShellCommand(string batchCommand)
+        {
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = command;
+            startInfo.Arguments = string.Format("/C " + batchCommand);
             process.StartInfo = startInfo;
             process.Start();
-
-            var windowExists = new ProcessList.ProcessList().hasWindow("Standardprogramme festlegen");
-            if(windowExists) Console.WriteLine("Die Batch kann genutzt werden");
-            else Console.WriteLine("Die Batch kann NICHT genutzt werden");
-            CloseApp();
         }
 
         private static void AskUserForEvaluation()
@@ -54,13 +72,13 @@ namespace WindowsSetDefaultProgramChecker
         private static void CloseApp()
         {
             Console.WriteLine("\n Programm wird beendet in...");
-            Console.Write(" :");
+            Console.Write(" : ");
 
             var count = 0;
             while (count < 3)
             {
                 Console.Write($"{3- count++}...");
-                Task.Delay(1250).Wait();
+                Task.Delay(1000).Wait();
             }
             Environment.Exit(0);
         }
