@@ -1,0 +1,9 @@
+﻿The following files of this package are taken or modified from http://blog.bigbasti.com/c-alle-sichtbaren-prozesse-fenster-auflisten/.
+For license information of the Windows-Forms-App "ProcessListDemo" please contact the origin author. 
+Cloned Files:
+- Declarations.cs
+- Window.cs
+- Windows.cs
+
+Modified Files:
+- Form1 >>> ProcessList

@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsSetDefaultProgramChecker.ProcessList
+{
+    /// <summary>
+    /// modified based on Form1.cs from http://blog.bigbasti.com/c-alle-sichtbaren-prozesse-fenster-auflisten/
+    /// </summary>
+    public class ProcessList
+    {
+        private List<string> _windowTitles;
+
+        /// <summary>
+        /// adappeted from http://blog.bigbasti.com/c-alle-sichtbaren-prozesse-fenster-auflisten/
+        /// </summary>
+        public List<string> GrabWindowNames(bool visibleWindows = true)
+        {
+            Windows windows = new Windows();
+            _windowTitles = new List<string>();
+            //Alle Fenster durchgehen und in die Lite einsetzen
+            foreach (Window w in windows.lstWindows)
+            {
+               if (visibleWindows && !w.winVisible)
+               {
+                    continue; //Wenn Fenster unsichtbar ist übrspringen
+               }
+               _windowTitles.Add(w.winTitle);
+            }
+            return _windowTitles;
+        }
+
+        public bool hasWindow(string windowName, int delayMilliseconds = 30000)
+        {
+            if (_windowTitles == null)
+            {
+                GrabWindowNames();
+                Task.Delay(delayMilliseconds).Wait();
+            }
+            return _windowTitles.Any(x => Regex.IsMatch(x, windowName));
+        }
+
+    }
+}
