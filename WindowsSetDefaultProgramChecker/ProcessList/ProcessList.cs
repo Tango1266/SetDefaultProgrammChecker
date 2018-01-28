@@ -36,7 +36,7 @@ namespace WindowsSetDefaultProgramChecker.ProcessList
             return _windowTitles;
         }
 
-        public bool hasWindow(string windowName, int delayMilliseconds = 30000)
+        public bool HasWindow(string windowName, int delayMilliseconds = 30000)
         {
             if (_windowTitles == null)
             {
@@ -44,15 +44,15 @@ namespace WindowsSetDefaultProgramChecker.ProcessList
             }
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            while (!doHasWindow(windowName) && timer.ElapsedMilliseconds < delayMilliseconds)
+            while (!DoHasWindow(windowName) && timer.ElapsedMilliseconds < delayMilliseconds)
             {
                 GrabWindowNames();
                 Task.Delay(250).Wait();
             }
-            return doHasWindow(windowName);
+            return DoHasWindow(windowName);
         }
 
-        private bool doHasWindow(string windowName)
+        private bool DoHasWindow(string windowName)
         {
             return _windowTitles.Any(x => Regex.IsMatch(x, windowName));
         }

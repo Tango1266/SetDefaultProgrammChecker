@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Input;
 using WindowsSetDefaultProgramChecker.ProcessList;
 using Newtonsoft.Json;
 
@@ -24,13 +26,22 @@ namespace WindowsSetDefaultProgramChecker
         private static void EvaluateBatchExecutedSuccessfully(string expectedWindowName)
         {
             var windowExists = CheckWaitExists(expectedWindowName);
-            if (windowExists) Console.WriteLine("Die Batch kann genutzt werden");
+            if (windowExists)
+            {
+                Console.WriteLine("Die Batch kann genutzt werden");
+                CloseWindowOnFocus();
+            }
             else Console.WriteLine("Die Batch kann NICHT genutzt werden");
+        }
+
+        private static void CloseWindowOnFocus()
+        {
+            SendKeys.SendWait("%({F4})");
         }
 
         private static bool CheckWaitExists(string expectedWindowName)
         {
-            return new ProcessList.ProcessList().hasWindow(expectedWindowName);
+            return new ProcessList.ProcessList().HasWindow(expectedWindowName);
         }
 
         private static void DisplayVersionInformation()
@@ -42,10 +53,13 @@ namespace WindowsSetDefaultProgramChecker
         private static void ExectuteShellCommand(string batchCommand)
         {
             System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = string.Format("/C " + batchCommand);
+            System.Diagnostics.ProcessStartInfo startInfo =
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+                    FileName = "cmd.exe",
+                    Arguments = string.Format("/C " + batchCommand)
+                };
             process.StartInfo = startInfo;
             process.Start();
         }
